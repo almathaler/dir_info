@@ -30,7 +30,7 @@ int main(){
 }
 
 int print_files(DIR *current){
-  printf("REG FILES:\n");
+  printf("files:\n");
   struct dirent *reading;
   reading = readdir(current);
 
@@ -56,7 +56,7 @@ int print_files(DIR *current){
 }
 
 int print_directories(DIR *current){
-  printf("DIRECTORIES:\n");
+  printf("directories:\n");
   struct dirent *reading;
   reading = readdir(current);
 
@@ -69,6 +69,16 @@ int print_directories(DIR *current){
     //if d_type = 4 then directory and if = 8 then 'reg', i assume just file
     if (reading->d_type == 4){
       printf("\t%s\n", reading->d_name);
+      if (strcmp(reading->d_name, ".") != 0 &&
+          strcmp(reading->d_name, "..") != 0){
+        printf("\t");
+        DIR *print_cur = opendir(reading->d_name);
+        print_files(print_cur);
+        closedir(print_cur);
+        printf("\n");
+      }else{
+        printf("\n");
+      }
     }
 
     reading = readdir(current);
@@ -97,14 +107,6 @@ int size_of_directory(DIR *current){
       stat(reading->d_name, &st);
       size+=(st.st_size);
       //below is to go into directoreis
-    }else if (reading->d_type == 4){
-      //shouldn't be looking at '.' and '..' DIRECTORIES
-      if (strcmp(reading->d_name, ".") != 0 &&
-          strcmp(reading->d_name, "..") != 0){
-        DIR *in_size = opendir(reading->d_name);
-        size += size_of_directory(in_size);
-        closedir(in_size);
-      }
     }
     reading = readdir(current);
     if (errno!=0){
