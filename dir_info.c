@@ -96,6 +96,15 @@ int size_of_directory(DIR *current){
       //printf("reading in this file: %s\n", (reading->d_name));
       stat(reading->d_name, &st);
       size+=(st.st_size);
+      //below is to go into directoreis
+    }else if (reading->d_type == 4){
+      //shouldn't be looking at '.' and '..' DIRECTORIES
+      if (strcmp(reading->d_name, ".") != 0 &&
+          strcmp(reading->d_name, "..") != 0){
+        DIR *in_size = opendir(reading->d_name);
+        size += size_of_directory(in_size);
+        closedir(in_size);
+      }
     }
     reading = readdir(current);
     if (errno!=0){
