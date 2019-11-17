@@ -12,8 +12,10 @@ run:
 	touch "text.txt"
 	touch "test.txt"
 	mkdir "makeDir/"
+	touch "makeDir/file.txt"
 	./program
 clean:
+	rm *.o
 	rm *.txt
 	rm -rf "makeDir/"
 	rm program
