@@ -12,15 +12,17 @@ int size_of_directory(DIR *current);
 
 int main(int argc, char **argv){
   errno = 0;
-  char *d;
+  char *d = NULL;
   DIR *current;
   printf("current length of argv: %d\n", argc);
   if (argc > 1){
-    char *d = argv[1];
+    d = argv[1];
+    printf("argv1: %s\n", argv[1]);
     printf("\n-------\nstatistics for the current directory \"%s\":\n", d);
-    DIR *current = opendir(d);
+    current = opendir(d);
     if (errno != 0){
       printf("errno: %d\t strerror: %s\n", errno, strerror(errno));
+      return 0;
     }
   }else{
     printf("STOP! You must input a directory to scan. Quitting\n");
