@@ -17,15 +17,19 @@ int main(){
   if (errno != 0){
     printf("errno: %d\t strerror: %s\n", errno, strerror(errno));
   }
-  printf("size of directory: %d Bytes\n\n", size_of_directory(current));
+
+  printf("size of directory (of all non-directory files): %d Bytes\n\n", size_of_directory(current));
   closedir(current);
+
   current = opendir(".");
   print_directories(current);
   //so that i can scan once more for files
   closedir(current);
+
   current = opendir(".");
   print_files(current);
   closedir(current);
+
   return 0;
 }
 
@@ -69,6 +73,7 @@ int print_directories(DIR *current){
     //if d_type = 4 then directory and if = 8 then 'reg', i assume just file
     if (reading->d_type == 4){
       printf("\t%s\n", reading->d_name);
+      /*
       if (strcmp(reading->d_name, ".") != 0 &&
           strcmp(reading->d_name, "..") != 0){
         printf("\t");
@@ -79,6 +84,7 @@ int print_directories(DIR *current){
       }else{
         printf("\n");
       }
+      */
     }
 
     reading = readdir(current);

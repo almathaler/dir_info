@@ -10,16 +10,16 @@ dir_info.o:
 	$(CC) -c dir_info.c
 run:
 	touch "text.txt" "test.txt"
-	mkdir "makeDir/"
-	touch "makeDir/file.txt"
-	echo "random text to beef up size" >> "makeDir/file.txt"
-	mkdir "makeDir2/"
-	touch "makeDir2/file.txt" "makeDir2/file2.txt" "makeDir2/file3.txt"
-	echo "more random text. want this to be really long. should also add more files" >> "makeDir2/file.txt"
+	mkdir "dir1/"
+	touch "dir1/file.txt"
+	echo "random text to beef up size" >> "dir1/file.txt"
+	mkdir "dir2/"
+	touch "dir2/file.txt" "dir2/file2.txt" "dir2/file3.txt"
+	echo "more random text. want this to be really long. should also add more files" >> "dir2/file.txt"
 	./program
 clean:
 	rm *.o
 	rm *.txt
-	rm -rf "makeDir/"
-	rm -rf "makeDir2/"
+	rm -rf "dir1/"
+	rm -rf "dir2/"
 	rm program
