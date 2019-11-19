@@ -32,18 +32,28 @@ int main(int argc, char **argv){
     printf("LINE 30 errno: %d\tstrerror:%s\n", errno, strerror(errno));
   }
   printf("\n");
+  char *pathname = NULL;
   while (current != NULL){
     if (current->d_type == DT_REG){
       //size
       struct stat buffer;
-      stat(current->d_name, &buffer);
-      printf("just about to take size, name of current name: %s\n", current->d_name);
+      //setting pathname so it works for files not in cwd
+      pathname = argv[1];
+      printf("pathname: %s\n", pathname);
+      printf("argv[1]: %s\n", argv[1]);
+      strcat(pathname, "/");
+      printf("line42 pathname: %s\n", pathname);
+      strcat(pathname, current->d_name);
+      printf("pathname: %s\n", pathname);
+      stat(pathname, &buffer);
+      printf("just about to take size, name of current: %s\n", current->d_name);
+
       size += buffer.st_size; //adding the size
       //print out
       if (errno != 0){
         printf("LINE 43 (SIZE) errno: %d\tstrerror:%s\n", errno, strerror(errno));
       }
-      printf("f: %s\n", current->d_name);
+      printf("f: %s\n\n", current->d_name);
     }else if(current->d_type == DT_DIR){
       printf("d: %s\n", current->d_name);
     }
