@@ -6,123 +6,56 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-int print_files(DIR *current);
-int print_directories(DIR *current);
-int size_of_directory(DIR *current);
-
 int main(int argc, char **argv){
-  errno = 0;
-  char *d = NULL;
-  DIR *current = NULL;
-  //printf("current length of argv: %d\n", argc);
+  printf("\nWelcome to Alma's DIR_INFO\n");
+  DIR *path = NULL;
+  struct dirent *current = NULL;
+
   if (argc > 1){
-    d = argv[1];
+    path = opendir(argv[1]);
+    printf("Reading through directory: %s\n", argv[1]);
+    if (errno != 0){
+      printf("LINE 16 errno: %d\tstrerror:%s\n", errno, strerror(errno));
+    }
   }else{
-    printf("STOP! You must input a directory to scan. Quitting\n");
+    printf("NO ARGUMENT! Quitting\n");
     return 0;
   }
-  //printf("argv1: %s\n", argv[1]);
-  printf("\n--------\nstatistics for the current directory \"%s\":\n", d);
-  printf("if you would like to check another directory, rerun as \"./program (input)\"\n");
-  current = opendir(d);
+  //printing out the files and directories
+  int size = 0;
+  //going thru all files, if it's a file mark it as such and if not mark it as f
+  //add up size if it's a file
+  //print out size at end
+  errno = 0;
+  current = readdir(path);
   if (errno != 0){
-    printf("errno: %d\t strerror: %s\n", errno, strerror(errno));
-    return 0;
-  }
-  printf("\nsize of directory (of all non-directory files): %d Bytes\n", size_of_directory(current));
-  closedir(current);
-
-  current = opendir(d);
-  print_directories(current);
-  //so that i can scan once more for files
-  closedir(current);
-
-  current = opendir(d);
-  print_files(current);
-  closedir(current);
-  printf("---------\n\n");
-  return 0;
-}
-
-int print_files(DIR *current){
-  printf("\nfiles:\n");
-  struct dirent *reading;
-  reading = readdir(current);
-
-  if (errno!=0){
-    printf("PRINT FILES errno: %d\t strerror: %s\n", errno, strerror(errno));
-    return 0;
-  }
-
-  while(reading!=NULL){
-    //man dirent
-    //if d_type = 4 then directory and if = 8 then 'reg', i assume just file
-    if (reading->d_type == 8){
-      printf("\t%s\n", reading->d_name);
-    }
-
-    reading = readdir(current);
-    if (errno!=0){
-      printf("PRINT FILES errno: %d\t strerror: %s\n", errno, strerror(errno));
-      return 0;
-    }
-
+    printf("LINE 30 errno: %d\tstrerror:%s\n", errno, strerror(errno));
   }
   printf("\n");
+  while (current != NULL){
+    if (current->d_type == DT_REG){
+      //size
+      struct stat buffer;
+      stat(current->d_name, &buffer);
+      printf("just about to take size, name of current name: %s\n", current->d_name);
+      size += buffer.st_size; //adding the size
+      //print out
+      if (errno != 0){
+        printf("LINE 43 (SIZE) errno: %d\tstrerror:%s\n", errno, strerror(errno));
+      }
+      printf("f: %s\n", current->d_name);
+    }else if(current->d_type == DT_DIR){
+      printf("d: %s\n", current->d_name);
+    }
+    errno = 0;
+    current = readdir(path);//increment
+    //printf("current: %s\n", current->d_name);
+    if (errno != 0){
+      printf("LINE 53 errno: %d\tstrerror:%s\n", errno, strerror(errno));
+    }
+  }
+  printf("total size: %d BYTES\n", size);
+  printf("thanks for looking!\n");
+  printf("\n");
   return 0;
-}
-
-int print_directories(DIR *current){
-  printf("\ndirectories:\n");
-  struct dirent *reading;
-  reading = readdir(current);
-
-  if (errno!=0){
-    printf("PRINT DIRECTORIES errno: %d\t strerror: %s\n", errno, strerror(errno));
-    return 0;
-  }
-
-  while(reading!=NULL){
-    //man dirent
-    //if d_type = 4 then directory and if = 8 then 'reg', i assume just file
-    if (reading->d_type == 4){
-      printf("\t%s\n", reading->d_name);
-    }
-
-    reading = readdir(current);
-    if (errno!=0){
-      printf("PRINT DIRECTORIES errno: %d\t strerror: %s\n", errno, strerror(errno));
-      return 0;
-    }
-
-  }
-  //printf("\n");
-  return 0;
-}
-
-int size_of_directory(DIR *current){
-  struct dirent *reading;
-  int size = 0;
-  reading = readdir(current);
-  if (errno!=0){
-    printf("SIZE errno: %d\t strerror: %s\n", errno, strerror(errno));
-    return 0;
-  }
-  struct stat st;
-  while(reading!=NULL){
-    //man dirent
-    //if d_type = 4 then directory and if = 8 then 'reg', i assume just file
-    if (reading->d_type == 8){
-      //printf("reading in this file: %s\n", (reading->d_name));
-      stat(reading->d_name, &st);
-      size+=(st.st_size);
-      //below is to go into directoreis
-    }
-    reading = readdir(current);
-    if (errno!=0){
-      printf("SIZE DIRECTORY errno: %d\t strerror: %s\n", errno, strerror(errno));
-      return 0;
-    }
-  }
-  return size;
 }
