@@ -49,7 +49,8 @@ int print_files(DIR *current){
   reading = readdir(current);
 
   if (errno!=0){
-    printf("errno: %d\t strerror: %s\n", errno, strerror(errno));
+    printf("PRINT FILES errno: %d\t strerror: %s\n", errno, strerror(errno));
+    return 0;
   }
 
   while(reading!=NULL){
@@ -61,7 +62,8 @@ int print_files(DIR *current){
 
     reading = readdir(current);
     if (errno!=0){
-      printf("errno: %d\t strerror: %s\n", errno, strerror(errno));
+      printf("PRINT FILES errno: %d\t strerror: %s\n", errno, strerror(errno));
+      return 0;
     }
 
   }
@@ -75,7 +77,8 @@ int print_directories(DIR *current){
   reading = readdir(current);
 
   if (errno!=0){
-    printf("errno: %d\t strerror: %s\n", errno, strerror(errno));
+    printf("PRINT DIRECTORIES errno: %d\t strerror: %s\n", errno, strerror(errno));
+    return 0;
   }
 
   while(reading!=NULL){
@@ -99,7 +102,8 @@ int print_directories(DIR *current){
 
     reading = readdir(current);
     if (errno!=0){
-      printf("errno: %d\t strerror: %s\n", errno, strerror(errno));
+      printf("PRINT DIRECTORIES errno: %d\t strerror: %s\n", errno, strerror(errno));
+      return 0;
     }
 
   }
@@ -112,7 +116,8 @@ int size_of_directory(DIR *current){
   int size = 0;
   reading = readdir(current);
   if (errno!=0){
-    printf("errno: %d\t strerror: %s\n", errno, strerror(errno));
+    printf("SIZE errno: %d\t strerror: %s\n", errno, strerror(errno));
+    return 0;
   }
   struct stat st;
   while(reading!=NULL){
@@ -126,7 +131,8 @@ int size_of_directory(DIR *current){
     }
     reading = readdir(current);
     if (errno!=0){
-      printf("errno: %d\t strerror: %s\n", errno, strerror(errno));
+      printf("SIZE DIRECTORY errno: %d\t strerror: %s\n", errno, strerror(errno));
+      return 0;
     }
   }
   return size;
