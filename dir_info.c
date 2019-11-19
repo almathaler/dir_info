@@ -13,38 +13,39 @@ int size_of_directory(DIR *current);
 int main(int argc, char **argv){
   errno = 0;
   char *d = NULL;
-  DIR *current;
-  printf("current length of argv: %d\n", argc);
+  DIR *current = NULL;
+  //printf("current length of argv: %d\n", argc);
   if (argc > 1){
     d = argv[1];
-    printf("argv1: %s\n", argv[1]);
-    printf("\n-------\nstatistics for the current directory \"%s\":\n", d);
-    current = opendir(d);
-    if (errno != 0){
-      printf("errno: %d\t strerror: %s\n", errno, strerror(errno));
-      return 0;
-    }
   }else{
     printf("STOP! You must input a directory to scan. Quitting\n");
     return 0;
   }
-  printf("size of directory (of all non-directory files): %d Bytes\n\n", size_of_directory(current));
+  //printf("argv1: %s\n", argv[1]);
+  printf("\n--------\nstatistics for the current directory \"%s\":\n", d);
+  printf("if you would like to check another directory, rerun as \"./program (input)\"\n");
+  current = opendir(d);
+  if (errno != 0){
+    printf("errno: %d\t strerror: %s\n", errno, strerror(errno));
+    return 0;
+  }
+  printf("\nsize of directory (of all non-directory files): %d Bytes\n", size_of_directory(current));
   closedir(current);
 
-  current = opendir(".");
+  current = opendir(d);
   print_directories(current);
   //so that i can scan once more for files
   closedir(current);
 
-  current = opendir(".");
+  current = opendir(d);
   print_files(current);
   closedir(current);
-
+  printf("---------\n\n");
   return 0;
 }
 
 int print_files(DIR *current){
-  printf("files:\n");
+  printf("\nfiles:\n");
   struct dirent *reading;
   reading = readdir(current);
 
@@ -72,7 +73,7 @@ int print_files(DIR *current){
 }
 
 int print_directories(DIR *current){
-  printf("directories:\n");
+  printf("\ndirectories:\n");
   struct dirent *reading;
   reading = readdir(current);
 
@@ -86,18 +87,6 @@ int print_directories(DIR *current){
     //if d_type = 4 then directory and if = 8 then 'reg', i assume just file
     if (reading->d_type == 4){
       printf("\t%s\n", reading->d_name);
-      /*
-      if (strcmp(reading->d_name, ".") != 0 &&
-          strcmp(reading->d_name, "..") != 0){
-        printf("\t");
-        DIR *print_cur = opendir(reading->d_name);
-        print_files(print_cur);
-        closedir(print_cur);
-        printf("\n");
-      }else{
-        printf("\n");
-      }
-      */
     }
 
     reading = readdir(current);
@@ -107,7 +96,7 @@ int print_directories(DIR *current){
     }
 
   }
-  printf("\n");
+  //printf("\n");
   return 0;
 }
 
