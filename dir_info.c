@@ -8,6 +8,7 @@
 
 int main(int argc, char **argv){
   printf("\nWelcome to Alma's DIR_INFO\n");
+  printf("If you'd like to scan a different directory, do ./program (path)\n");
   DIR *path = NULL;
   struct dirent *current = NULL;
 
@@ -32,28 +33,29 @@ int main(int argc, char **argv){
     printf("LINE 30 errno: %d\tstrerror:%s\n", errno, strerror(errno));
   }
   printf("\n");
-  char *pathname = NULL;
+  char fullpath[256];
   while (current != NULL){
     if (current->d_type == DT_REG){
       //size
       struct stat buffer;
       //setting pathname so it works for files not in cwd
-      pathname = argv[1];
-      printf("pathname: %s\n", pathname);
-      printf("argv[1]: %s\n", argv[1]);
-      strcat(pathname, "/");
-      printf("line42 pathname: %s\n", pathname);
-      strcat(pathname, current->d_name);
-      printf("pathname: %s\n", pathname);
-      stat(pathname, &buffer);
-      printf("just about to take size, name of current: %s\n", current->d_name);
+      fullpath[0] = '\0';
+      strcpy(fullpath, argv[1]);
+      //printf("pathname: %s\n", fullpath);
+      //printf("argv[1]: %s\n", argv[1]);
+      strcat(fullpath, "/");
+      //printf("line42 pathname: %s\n", fullpath);
+      strcat(fullpath, current->d_name);
+      //printf("pathname: %s\n", fullpath);
+      stat(fullpath, &buffer);
+      //printf("just about to take size, name of current: %s\n", current->d_name);
 
       size += buffer.st_size; //adding the size
       //print out
       if (errno != 0){
         printf("LINE 43 (SIZE) errno: %d\tstrerror:%s\n", errno, strerror(errno));
       }
-      printf("f: %s\n\n", current->d_name);
+      printf("f: %s\n", current->d_name);
     }else if(current->d_type == DT_DIR){
       printf("d: %s\n", current->d_name);
     }
