@@ -16,24 +16,30 @@ int main(int argc, char **argv){
     path = opendir(argv[1]);
     printf("Reading through directory: %s\n", argv[1]);
     if (errno != 0){
-      printf("LINE 16 errno: %d\tstrerror:%s\n", errno, strerror(errno));
+      printf("errno: %d\tstrerror: %s\n", errno, strerror(errno));
+      return 0;
     }
   }else{
     printf("NO ARGUMENT! Quitting\n");
     return 0;
   }
   //printing out the files and directories
-  int size = 0;
+  double size = 0.0;
   //going thru all files, if it's a file mark it as such and if not mark it as f
   //add up size if it's a file
   //print out size at end
   errno = 0;
   current = readdir(path);
   if (errno != 0){
-    printf("LINE 30 errno: %d\tstrerror:%s\n", errno, strerror(errno));
+    printf("errno: %d\tstrerror: %s\n", errno, strerror(errno));
+    return 0;
   }
   printf("\n");
   char fullpath[256];
+  char files[1024];
+  files[0] = '\0';
+  char directories[1024];
+  directories[0] = '\0';
   while (current != NULL){
     if (current->d_type == DT_REG){
       //size
@@ -53,20 +59,31 @@ int main(int argc, char **argv){
       size += buffer.st_size; //adding the size
       //print out
       if (errno != 0){
-        printf("LINE 43 (SIZE) errno: %d\tstrerror:%s\n", errno, strerror(errno));
+        printf("errno: %d\tstrerror: %s\n", errno, strerror(errno));
+        return 0;
       }
-      printf("f: %s\n", current->d_name);
+      strcat(files, "f: ");
+      strcat(files, current->d_name);
+      strcat(files, "\n");
+      //printf("f: %s\n", current->d_name);
     }else if(current->d_type == DT_DIR){
-      printf("d: %s\n", current->d_name);
+      strcat(directories, "d: ");
+      strcat(directories, current->d_name);
+      strcat(directories, "\n");
+      //printf("d: %s\n", current->d_name);
     }
     errno = 0;
     current = readdir(path);//increment
     //printf("current: %s\n", current->d_name);
     if (errno != 0){
-      printf("LINE 53 errno: %d\tstrerror:%s\n", errno, strerror(errno));
+      printf("errno: %d\tstrerror: %s\n", errno, strerror(errno));
+      return 0;
     }
   }
-  printf("total size: %d BYTES\n", size);
+  printf("%s", directories);
+  printf("%s", files);
+  size = size / 1000;
+  printf("total size: %f KB\n", size);
   printf("thanks for looking!\n");
   printf("\n");
   return 0;
